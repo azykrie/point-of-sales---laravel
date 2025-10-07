@@ -2144,7 +2144,7 @@
             "dist": {
                 "type": "zip",
                 "url": "./packages/FluxPro [ Update v2.4.0 ].zip",
-                "shasum": "bb978204417629e9642324ed0d4a26436977afac"
+                "shasum": "18ed27e7a6e56770424e2106f7d8dc98c97c3a25"
             },
             "require": {
                 "illuminate/console": "^10.0|^11.0|^12.0",
