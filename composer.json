@@ -13,9 +13,10 @@
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "laravel/ui": "^4.6",
-        "livewire/flux": "2.4.0",
-        "livewire/flux-pro": "^2.4"
+        "livewire/flux": "2.6.0",
+        "livewire/flux-pro": "^2.6"
     },
+    
     "repositories": [
         {
             "type": "artifact",
