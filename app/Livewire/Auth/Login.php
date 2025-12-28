@@ -43,8 +43,8 @@ class Login extends Component
 
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard.index');
-            } elseif ($user->role === 'user') {
-                return redirect()->route('user.dashboard.index');
+            } elseif ($user->role === 'cashier') {
+                return redirect()->route('cashier.dashboard.index');
             } else {
                 Auth::logout();
                 return redirect()->route('login')->withErrors([

@@ -24,7 +24,7 @@
                     <flux:table.cell>
                         @if ($user->role == 'admin')
                             <flux:badge color="red" size="sm" inset="top bottom">{{ $user->role }}</flux:badge>
-                        @elseif ($user->role == 'user')
+                        @elseif ($user->role == 'cashier')
                             <flux:badge color="blue" size="sm" inset="top bottom">{{ $user->role }}
                             </flux:badge>
                         @endif

@@ -24,7 +24,7 @@
             <flux:select label="Role" wire:model="role">
                 <option value="">-- Choose Role --</option>
                 <option value="admin">Admin</option>
-                <option value="user">User</option>
+                <option value="cashier">Cashier</option>
             </flux:select>
         </flux:field>
 
