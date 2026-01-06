@@ -11,10 +11,9 @@
         </flux:field>
 
         <flux:field>
-            <flux:select label="Category" wire:model="category_id">
-                <option value="">-- Choose Category --</option>
+            <flux:select label="Category" wire:model="category_id" variant="listbox" searchable placeholder="Choose category...">
                 @foreach ($categories as $category)
-                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    <flux:select.option value="{{ $category->id }}">{{ $category->name }}</flux:select.option>
                 @endforeach
             </flux:select>
         </flux:field>
@@ -28,7 +27,20 @@
         </flux:field>
 
         <flux:field>
-            <flux:input label="Stock" type="number" wire:model="stock" placeholder="Enter stock quantity" min="0" />
+            <flux:label>Stock</flux:label>
+            <div class="mt-1 p-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <flux:icon.cube class="w-5 h-5 text-zinc-500" />
+                        <span class="text-lg font-semibold">{{ $stock }}</span>
+                        <span class="text-sm text-zinc-500">units</span>
+                    </div>
+                    <a href="{{ route('admin.stock-movements.index') }}" class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline">
+                        Manage Stock →
+                    </a>
+                </div>
+                <p class="text-xs text-zinc-500 mt-2">Stock can only be modified through Stock Movements</p>
+            </div>
         </flux:field>
 
         <flux:field>
