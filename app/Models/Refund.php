@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Refund extends Model
 {
+    const STATUS_PENDING = 'pending';
+    const STATUS_APPROVED = 'approved';
+    const STATUS_REJECTED = 'rejected';
+
     protected $fillable = [
         'refund_number',
         'sale_id',
@@ -13,6 +17,14 @@ class Refund extends Model
         'total_refund',
         'reason',
         'notes',
+        'status',
+        'processed_by',
+        'processed_at',
+        'reject_reason',
+    ];
+
+    protected $casts = [
+        'processed_at' => 'datetime',
     ];
 
     protected static function boot()
@@ -58,5 +70,25 @@ class Refund extends Model
     public function items()
     {
         return $this->hasMany(RefundItem::class);
+    }
+
+    public function processedBy()
+    {
+        return $this->belongsTo(User::class, 'processed_by');
+    }
+
+    public function isPending()
+    {
+        return $this->status === self::STATUS_PENDING;
+    }
+
+    public function isApproved()
+    {
+        return $this->status === self::STATUS_APPROVED;
+    }
+
+    public function isRejected()
+    {
+        return $this->status === self::STATUS_REJECTED;
     }
 }

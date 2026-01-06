@@ -11,9 +11,14 @@ class Sale extends Model
         'customer_name',
         'cashier_id',
         'payment_method',
+        'subtotal',
+        'tax_name',
+        'tax_percentage',
+        'tax_amount',
         'total_amount',
         'paid_amount',
         'change_amount',
+        'total_refunded',
         'status',
         'notes',
     ];
@@ -40,10 +45,5 @@ class Sale extends Model
     public function refunds()
     {
         return $this->hasMany(Refund::class);
-    }
-
-    public function getTotalRefundedAttribute()
-    {
-        return $this->refunds->sum('total_refund');
     }
 }

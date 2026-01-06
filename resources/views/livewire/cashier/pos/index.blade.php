@@ -142,7 +142,7 @@
                 @foreach ($products->take(8) as $product)
                     <button 
                         wire:click="quickAdd({{ $product->id }})"
-                        class="p-2 text-left text-xs border rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 transition {{ $selectedProductId == $product->id ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-zinc-200 dark:border-zinc-600' }}"
+                        class="p-2 text-left text-xs border rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 transition border-zinc-200 dark:border-zinc-600"
                     >
                         @if ($product->image)
                             <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-16 object-cover rounded mb-1">
@@ -197,7 +197,7 @@
                     </div>
                     <div class="flex justify-between">
                         <span>Cashier:</span>
-                        <span>{{ $lastSale->cashier->name ?? 'Admin' }}</span>
+                        <span>{{ auth()->user()->name }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span>Customer:</span>
@@ -274,13 +274,11 @@
         if (content) {
             const storeName = content.querySelector('.text-lg.font-bold')?.textContent || 'Receipt';
             
-            // Clone content and fix image URLs to absolute
             const clonedContent = content.cloneNode(true);
             const images = clonedContent.querySelectorAll('img');
             images.forEach(img => {
-                // Convert relative URL to absolute URL
                 if (img.src) {
-                    img.src = img.src; // This forces the browser to resolve to absolute URL
+                    img.src = img.src;
                 }
             });
             
@@ -314,7 +312,6 @@
             `);
             printWindow.document.close();
             
-            // Wait for images to load before printing
             const printImages = printWindow.document.querySelectorAll('img');
             if (printImages.length > 0) {
                 let loadedCount = 0;
@@ -335,7 +332,6 @@
                         };
                     }
                 });
-                // Fallback timeout in case images don't trigger events
                 setTimeout(() => {
                     if (!printWindow.closed) {
                         printWindow.print();

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin\Sales;
+namespace App\Livewire\Cashier\Sales;
 
 use App\Models\Sale;
 use Flux\Flux;
@@ -8,7 +8,7 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-#[Title('Sales History')]
+#[Title('My Transactions')]
 class Index extends Component
 {
     use WithPagination;
@@ -17,30 +17,11 @@ class Index extends Component
     public $filterStatus = '';
     public $filterPaymentMethod = '';
     public $filterDate = '';
-    public $deleteSaleId;
+    public $selectedSale = null;
 
     public function updatingSearch()
     {
         $this->resetPage();
-    }
-
-    public function confirmDelete($saleId)
-    {
-        $this->deleteSaleId = $saleId;
-    }
-
-    public function delete()
-    {
-        $sale = Sale::findOrFail($this->deleteSaleId);
-        
-        // Restore stock for each item
-        foreach ($sale->items as $item) {
-            $item->product->increment('stock', $item->quantity);
-        }
-        
-        $sale->delete();
-        Flux::toast('Sale deleted and stock restored!', variant: 'success');
-        Flux::modals()->close();
     }
 
     public function resetFilters()
@@ -48,10 +29,31 @@ class Index extends Component
         $this->reset(['filterStatus', 'filterPaymentMethod', 'filterDate', 'search']);
     }
 
+    public function showReceipt($saleId)
+    {
+        $this->selectedSale = Sale::with(['items', 'cashier'])
+            ->where('cashier_id', auth()->id())
+            ->findOrFail($saleId);
+        
+        Flux::modal('receipt-modal')->show();
+    }
+
+    public function printReceipt()
+    {
+        $this->dispatch('print-receipt');
+    }
+
+    public function closeReceipt()
+    {
+        $this->selectedSale = null;
+        Flux::modal('receipt-modal')->close();
+    }
+
     public function render()
     {
         $sales = Sale::query()
-            ->with(['cashier', 'items'])
+            ->with(['items'])
+            ->where('cashier_id', auth()->id()) // Only show transactions by this cashier
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('invoice_number', 'like', '%' . $this->search . '%')
@@ -68,8 +70,8 @@ class Index extends Component
                 $query->whereDate('created_at', $this->filterDate);
             })
             ->latest()
-            ->paginate(5);
+            ->paginate(10);
 
-        return view('livewire.admin.sales.index', compact('sales'));
+        return view('livewire.cashier.sales.index', compact('sales'));
     }
 }

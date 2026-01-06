@@ -4,9 +4,11 @@ namespace App\Livewire\Admin\StockMovements;
 
 use App\Models\Product;
 use App\Models\StockMovement;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+#[Title('Stock Movements')]
 class Index extends Component
 {
     use WithPagination;
@@ -196,7 +198,7 @@ class Index extends Component
                 $query->where('reason', $this->filterReason);
             })
             ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->paginate(5);
 
         $products = Product::where('is_available', true)->orderBy('name')->get();
 

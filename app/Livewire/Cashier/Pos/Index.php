@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin\Cashiers;
+namespace App\Livewire\Cashier\Pos;
 
 use App\Models\Product;
 use App\Models\Sale;
@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('Cashier - Point of Sale')]
+#[Title('Point of Sale')]
 class Index extends Component
 {
     public $customerName = '';
@@ -51,24 +51,19 @@ class Index extends Component
         
         if ($existingIndex !== false) {
             $newQty = $this->cart[$existingIndex]['quantity'] + $this->quantity;
-            if ($newQty > $product->stock + $this->cart[$existingIndex]['quantity']) {
+            if ($newQty > $product->stock) {
                 Flux::toast('Not enough stock! Available: ' . $product->stock, variant: 'danger');
                 return;
             }
-            // Decrease stock for the additional quantity
-            $product->decrement('stock', $this->quantity);
             $this->cart[$existingIndex]['quantity'] = $newQty;
             $this->cart[$existingIndex]['subtotal'] = $newQty * $product->selling_price;
         } else {
-            // Decrease stock when adding new item to cart
-            $product->decrement('stock', $this->quantity);
-            
             $this->cart[] = [
                 'product_id' => $product->id,
                 'product_name' => $product->name,
                 'image' => $product->image,
                 'price' => $product->selling_price,
-                'stock' => $product->stock - $this->quantity,
+                'stock' => $product->stock,
                 'quantity' => $this->quantity,
                 'subtotal' => $this->quantity * $product->selling_price,
             ];
@@ -93,20 +88,11 @@ class Index extends Component
             return;
         }
 
-        $currentQty = $this->cart[$index]['quantity'];
         $product = Product::find($this->cart[$index]['product_id']);
-        $diff = $qty - $currentQty;
         
-        if ($diff > 0) {
-            // Increasing quantity - check if enough stock
-            if ($diff > $product->stock) {
-                Flux::toast('Not enough stock! Available: ' . $product->stock, variant: 'danger');
-                return;
-            }
-            $product->decrement('stock', $diff);
-        } else {
-            // Decreasing quantity - restore stock
-            $product->increment('stock', abs($diff));
+        if ($qty > $product->stock) {
+            Flux::toast('Not enough stock! Available: ' . $product->stock, variant: 'danger');
+            return;
         }
 
         $this->cart[$index]['quantity'] = $qty;
@@ -115,10 +101,6 @@ class Index extends Component
 
     public function removeFromCart($index)
     {
-        // Restore stock when removing from cart
-        $item = $this->cart[$index];
-        Product::where('id', $item['product_id'])->increment('stock', $item['quantity']);
-        
         unset($this->cart[$index]);
         $this->cart = array_values($this->cart);
         Flux::toast('Product removed from cart!', variant: 'success');
@@ -218,7 +200,8 @@ class Index extends Component
                     'subtotal' => $item['subtotal'],
                 ]);
 
-                // Stock already decreased when adding to cart, no need to decrease again
+                // Update stock
+                Product::where('id', $item['product_id'])->decrement('stock', $item['quantity']);
             }
 
             DB::commit();
@@ -259,7 +242,7 @@ class Index extends Component
             ->orderBy('name')
             ->get();
 
-        return view('livewire.admin.cashiers.index', [
+        return view('livewire.cashier.pos.index', [
             'products' => $products,
             'subtotal' => $this->getSubtotal(),
             'taxEnabled' => $this->getTaxEnabled(),

@@ -185,7 +185,7 @@ class Index extends Component
                 };
             })
             ->latest()
-            ->paginate(10);
+            ->paginate(5);
 
         $categories = \App\Models\Category::orderBy('name')->get();
 
