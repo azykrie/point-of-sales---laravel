@@ -119,7 +119,7 @@
             <flux:heading class="mb-4">Add Product</flux:heading>
             
             <div class="space-y-4">
-                <flux:select wire:model="selectedProductId" label="Select Product" placeholder="Choose a product...">
+                <flux:select wire:model="selectedProductId" label="Select Product" variant="listbox" searchable placeholder="Choose a product...">
                     @foreach ($products as $product)
                         <flux:select.option value="{{ $product->id }}">
                             {{ $product->name }} - Rp {{ number_format($product->selling_price, 0, ',', '.') }} ({{ $product->stock }})

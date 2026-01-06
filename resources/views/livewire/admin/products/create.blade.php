@@ -11,10 +11,9 @@
         </flux:field>
 
         <flux:field>
-            <flux:select label="Category" wire:model="category_id">
-                <option value="">-- Choose Category --</option>
+            <flux:select label="Category" wire:model="category_id" variant="listbox" searchable placeholder="Choose categories...">
                 @foreach ($categories as $category)
-                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    <flux:select.option value="{{ $category->id }}">{{ $category->name }}</flux:select.option>
                 @endforeach
             </flux:select>
         </flux:field>
